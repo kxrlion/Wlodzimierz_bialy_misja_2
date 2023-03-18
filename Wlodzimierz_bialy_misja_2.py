@@ -197,7 +197,7 @@ ile_budynki = [0,0]
 ile_laki = [0,0] 
 ile_lasy = [0,0] 
 ile_piasek = [0,0]
-obrazy = [11]   
+obrazy = [14,15]   
 
 PIL_H_converter = 0.7083333
 PIL_S_V_converter = 2.55
@@ -210,7 +210,7 @@ piasek_kolor = (int(40 * PIL_H_converter),int(52*PIL_S_V_converter),int(79*PIL_S
 
 
 f = open("text.txt",'a')
-for k in range(0,1):
+for k in range(0,2):
     
     
     img = Image.open(str(obrazy[k])+'-'+str(obrazy[k])+'.jpg')
@@ -219,19 +219,22 @@ for k in range(0,1):
     pixel_access_object = img.load();
     gaussian_blur(pixel_access_object,1)
     print("pierwszy blur")
-    is_edge=edge_detection(pixel_access_object,img)
+    is_edge1=edge_detection(pixel_access_object,img)
     print("krawedzie")
     gaussian_blur(pixel_access_object,1)
     print("drugi blur")
     to_map(pixel_access_object,ile_woda,ile_budynki,ile_laki,ile_lasy,ile_piasek,k)
-    
     print("do mapki")
+    is_edge2=edge_detection(pixel_access_object,img)
+    print("krawedzie 2")
+    j=0
     for j in range(1,height-2):
-            for i in range(1,width-2):
-                if(is_edge[i][j]==1):
+        i=0    
+        for i in range(1,width-2):
+                if is_edge1[i][j]==1 or is_edge2[i][j]==1:
                     pixel_access_object[i,j]=(0,0,0)
-                if pixel_access_object[i,j] == woda_kolor:
-                    pixel_access_object[i,j] = budynki_kolor
+                if pixel_access_object[i,j] == budynki_kolor:
+                    pixel_access_object[i,j] = woda_kolor
     gaussian_blur(pixel_access_object,1)
     print("trzeci blur")
     img.show()
@@ -239,7 +242,7 @@ for k in range(0,1):
     #img.save(str(k)+'.jpg')   
     img.close()
     print("")
-    
+i=0
 for i in range(0,2):    
     f.write(""+'\n')
     f.write("piksele woda "+str(obrazy[i])+': '+str(ile_woda[i])+'\n')
@@ -251,12 +254,12 @@ for i in range(0,2):
 
 f.write("roznica pomiedzy zdjeciami"+'\n')
 f.write(""+'\n')
-f.write("woda: " + str(  (ile_woda[1]-ile_woda[0])/(width*height) )+'\n' )
+f.write("woda: " + str(  (ile_woda[1]/(width*height)-ile_woda[0]/(width*height)) )+'\n' )
 f.write("")
-f.write("piasek: " + str( (ile_piasek[1]-ile_piasek[0])/(width*height) )+'\n' )
+f.write("piasek: " + str( (ile_piasek[1]/(width*height)-ile_piasek[0]/(width*height)) )+'\n' )
 f.write("")
-f.write("lasy: " + str(  (ile_lasy[1]-ile_lasy[0])/(width*height ) )+'\n')
+f.write("lasy: " + str(  (ile_lasy[1]/(width*height)-ile_lasy[0]/(width*height)) )+'\n')
 f.write("")
-f.write("laki: " + str(  (ile_laki[1]-ile_laki[0])/(width*height) ) +'\n')
+f.write("laki: " + str(  (ile_laki[1]/(width*height)-ile_laki[0]/(width*height)) ) +'\n')
 
 #performance time = 1'50"
